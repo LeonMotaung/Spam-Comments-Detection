@@ -8,6 +8,8 @@ from sklearn.naive_bayes import BernoulliNB
 data = pd.read_csv("Youtube01-Psy.csv")
 print(data.sample(5))
 
+data["CLASS"] = data["CLASS"].map({0: "Not Spam", 1: "Spam Comment"})
+
 x = np.array(data["CONTENT"])
 y = np.array(data["CLASS"])
 
@@ -19,6 +21,10 @@ model = BernoulliNB()
 model.fit(xtrain, ytrain)
 print(model.score(xtest, ytest))
 
-sample = "Check this out: https://thecleverprogrammer.com/" 
+sample = "Check this out: https://amanxai.com/" 
 data = cv.transform([sample]).toarray()
 print(model.predict(data))
+
+sample = "Lack of information!" 
+data = cv.transform([sample]).toarray()
+print(model.predict(data)) 

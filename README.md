@@ -6,3 +6,50 @@ Detecting spam comments is the task of text classification in Machine Learning. 
 To detect spam comments with Machine Learning, we need labelled data of spam comments. Luckily, I found a dataset on Kaggle about YouTube spam comments which will be helpful for the task of spam comments detection. You can download the dataset from here.
 
 In the section below, you will learn how to detect spam comments with machine learning using the Python programming language.
+
+## Spam Comments Detection using Python
+Let’s start this task by importing the necessary Python libraries and the dataset:
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import BernoulliNB
+
+data = pd.read_csv("Youtube01-Psy.csv")
+print(data.sample(5))
+
+# We need to map comments class labels 
+data["CLASS"] = data["CLASS"].map({0: "Not Spam", 1: "Spam Comment"})
+
+x = np.array(data["CONTENT"])
+y = np.array(data["CLASS"])
+
+cv = CountVectorizer()
+x = cv.fit_transform(x)
+xtrain, xtest, ytrain, ytest = train_test_split(x, y, 
+                                                test_size=0.2, 
+                                                random_state=42)
+
+model = BernoulliNB()
+model.fit(xtrain, ytrain)
+print(model.score(xtest, ytest))
+```
+
+Now let’s test the model by giving spam and not spam comments as input:
+```python
+sample = "Check this out: https://amanxai.com/" 
+data = cv.transform([sample]).toarray()
+print(model.predict(data))
+```
+`['Spam Comment']`
+
+```python
+sample = "Lack of information!" 
+data = cv.transform([sample]).toarray()
+print(model.predict(data)) 
+```
+`['Not Spam']`
+
+So this is how you can train a Machine Learning model for the task of spam detection using Python.
