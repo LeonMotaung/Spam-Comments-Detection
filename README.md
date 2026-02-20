@@ -16,6 +16,7 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import BernoulliNB
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 
 data = pd.read_csv("Youtube01-Psy.csv")
 print(data.sample(5))
@@ -32,23 +33,26 @@ xtrain, xtest, ytrain, ytest = train_test_split(x, y,
                                                 test_size=0.2, 
                                                 random_state=42)
 
-model = BernoulliNB()
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+nb = BernoulliNB()
+model = VotingClassifier(estimators=[('rf', rf), ('nb', nb)], voting='hard')
+
 model.fit(xtrain, ytrain)
-print(model.score(xtest, ytest))
+print("Ensemble Model Accuracy:", model.score(xtest, ytest))
 ```
 
 Now let’s test the model by giving spam and not spam comments as input:
 ```python
 sample = "Check this out: https://amanxai.com/" 
-data = cv.transform([sample]).toarray()
-print(model.predict(data))
+data_sample = cv.transform([sample]).toarray()
+print(model.predict(data_sample))
 ```
 `['Spam Comment']`
 
 ```python
 sample = "Lack of information!" 
-data = cv.transform([sample]).toarray()
-print(model.predict(data)) 
+data_sample = cv.transform([sample]).toarray()
+print(model.predict(data_sample)) 
 ```
 `['Not Spam']`
 
